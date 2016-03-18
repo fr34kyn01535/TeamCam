@@ -1,0 +1,37 @@
+{
+   "manifest_version":"1",
+   "type":"WebApp",
+   "permissions": ["GameInfo","Hotkeys"],
+   "meta":{
+      "name":"TeamCam",
+      "description":"TeamCam Teamspeak3 Webcam Chat",
+      "version":"1.5.0.0",
+	  "minimum-overwolf-version": "0.77.4.0",
+      "author":"fr34kyn01535",
+      "icon":"IconMouseOver.png",
+      "icon_gray":"IconMouseNormal.png"
+   },
+   "data":{
+      "start_window":"overlay",
+      "windows":{
+         "overlay":{
+            "file":"Files/overlay.html",
+            "transparent":false,
+            "resizable":true,
+			"in_game_only":true,
+			"start_position":{"top":0,"left":0},
+            "size":{"width":330,"height":300},
+            "min_size":{"width":330,"height":300},
+            "max_size":{"width":330,"height":300}
+         },
+         "settings":{
+            "file":"Files/settings.html",
+            "transparent":false,
+            "resizable":false,
+            "size":{"width":400,"height":305},
+            "min_size":{"width":400,"height":305},
+            "max_size":{"width":400,"height":305}
+         }
+      }
+   }
+}

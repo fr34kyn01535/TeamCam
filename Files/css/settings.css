@@ -1,0 +1,21 @@
+/*Settings*/
+
+#settings-page legend{
+  margin-bottom: 0px;
+}
+
+#settings-page .form-group{
+	margin:0px;
+}
+
+#settings-page #save{
+	float:right;
+}
+
+.well{
+height:100%;
+
+}
+body,html{
+overflow:hidden;
+}
