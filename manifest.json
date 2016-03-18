@@ -18,11 +18,11 @@
             "file":"Files/overlay.html",
             "transparent":false,
             "resizable":true,
-			"in_game_only":false,
+			"topmost":true,
 			"start_position":{"top":0,"left":0},
             "size":{"width":330,"height":300},
-            "min_size":{"width":330,"height":300},
-            "max_size":{"width":330,"height":300}
+            "min_size":{"width":220,"height":200},
+            "max_size":{"width":430,"height":400}
          },
          "settings":{
             "file":"Files/settings.html",
