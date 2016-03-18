@@ -18,7 +18,7 @@
             "file":"Files/overlay.html",
             "transparent":false,
             "resizable":true,
-			"in_game_only":true,
+			"in_game_only":false,
 			"start_position":{"top":0,"left":0},
             "size":{"width":330,"height":300},
             "min_size":{"width":330,"height":300},
