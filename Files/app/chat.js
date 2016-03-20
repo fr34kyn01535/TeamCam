@@ -1,4 +1,11 @@
-function main(){
+define(['./chat'],
+	function($, materialize, ripples,chat) {
+
+
+	});
+
+
+		function main(){
 	var self = this;
 	this.peers = {};
 	this.localStream = null;

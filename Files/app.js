@@ -4,12 +4,12 @@ requirejs.config({
         app: '../app',
         jquery: 'jquery',
         jquery_ui: 'jquery-ui.min',
-        materialize: 'material.min',
+        material: 'material.min',
         ripples: 'ripples.min',
-        sj_bundle: 'strophejingle.bundle',
+        strophe: 'strophejingle.bundle',
     },
     shim: {
-        'materialize': { deps: ["jquery", "jquery_ui"]},
+        'material': { deps: ["jquery", "jquery_ui"]},
         'jquery': {
             exports: '$'
         }
