@@ -19,3 +19,8 @@ height:100%;
 body,html{
 overflow:hidden;
 }
+
+.behaviour{
+	margin-top:20px !important;
+	margin-bottom:10px !important;
+}

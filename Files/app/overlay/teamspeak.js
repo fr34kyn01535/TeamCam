@@ -1,5 +1,5 @@
 define(['./view','./connection'],
-    function(view,chat) {
+    function(view,connection) {
         var teamspeak = {};
         teamspeak.activeServerId = 0;
 
@@ -13,8 +13,8 @@ define(['./view','./connection'],
                 view.setMyNickname(channel.myClientName);
                 view.setInfo(channel.host,channel.channelName);
 
-                chat.disconnect();
-                chat.connect(username,room);
+                connection.disconnect();
+                connection.connect(username,room);
             });
         }
 

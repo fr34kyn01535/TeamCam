@@ -1,5 +1,5 @@
-define(['jquery', 'material','ripples','./connection'],
-    function($,chat) {
+define(['jquery','material'],
+    function($,connection) {
 
         var view = {};
         view.viewId = 0;
@@ -11,18 +11,34 @@ define(['jquery', 'material','ripples','./connection'],
             $(document).trigger('teamspeak.load', $("#ts3")[0]);
         }
 
-        $("body").append('<object id="ts3" type="application/x-overwolfteamspeakplugin">\
+        $(function(){
+            $.material.init();
+            $("body").append('<object id="ts3" type="application/x-overwolfteamspeakplugin">\
             <param name="onload" value="ts3Loaded" />\
             </object>');
 
+            $("#username").hover(function(){
+                $("#info").fadeIn(250);
+            },function(){
+                $("#info").fadeOut(250);
+            });
 
-        $.material.init();
 
-        $("#username").hover(function(){
-            $("#info").fadeIn(250);
-        },function(){
-            $("#info").fadeOut(250);
+            $("#settings").click(function(){
+                overwolf.windows.obtainDeclaredWindow("settings",
+                    function(result){
+                        if (result.status == "success"){
+                            view.settingsViewId = result.window.id;
+                            overwolf.windows.restore(view.settingsViewId);
+                        }
+                    }
+                );
+            });
         });
+
+
+
+
 
         view.removeVideo = function(sid){
             $('#videos').find('>#remoteVideos_' + sid).fadeOut(350,function(){
@@ -58,7 +74,7 @@ define(['jquery', 'material','ripples','./connection'],
         }
 
         view.createVideo = function(nickname,sid){
-            return $('<video style="z-index:0;" data_nickname="'+nickname+'" autoplay="autoplay" oncontextmenu="return false;"/>').attr('id', 'remoteVideos_' + sid);
+            return $('<video class="video" data_nickname="'+nickname+'" autoplay="autoplay" oncontextmenu="return false;"/>').attr('id', 'remoteVideos_' + sid);
         }
 
         view.videoExists = function(nickname){
@@ -66,22 +82,27 @@ define(['jquery', 'material','ripples','./connection'],
         }
 
         view.setTalking = function(nickname,talking){
-            if(talking){
+                var selector = null;
+
                 var talkingVideo = $("video[data_nickname='"+nickname+"'");
-                if(talkingVideo.length != 0){
-                    $("video").css("z-index",0);
-                    talkingVideo.css("z-index",999);
-                    talkingVideo.addClass("talking");
-                    $("#username .value").text(nickname);
-                    $("#username").addClass("talking");
+                if(talkingVideo.length != 0) {
+                    selector = talkingVideo;
+                }else if(localStorage.getItem("hideNoCam") != "true"){
+                    selector = $("#nocam");
                 }
-            }else{
-                var talkingVideo = $("video[data_nickname='"+nickname+"'");
-                if(talkingVideo.length != 0){
-                    $("#username").removeClass("talking");
-                    talkingVideo.removeClass("talking");
+
+                if(selector != null){
+                    if(talking){
+                        $(".video").css("z-index",0);
+                        selector.css("z-index",999);
+                        selector.addClass("talking");
+                        $("#username .value").text(nickname);
+                        $("#username").addClass("talking");
+                    }else{
+                        $("#username").removeClass("talking");
+                        selector.removeClass("talking");
+                    }
                 }
-            }
         }
 
         view.close = function(){
@@ -97,7 +118,7 @@ define(['jquery', 'material','ripples','./connection'],
         overwolf.windows.onStateChanged.addListener(
             function (result) {
                 if(result.window_id == view.settingsViewId && result.window_state=="closed"){
-                    chat.reconnect();
+                    $(document).trigger('settings.close', $("#ts3")[0]);
                 }
             }
         );
@@ -108,16 +129,6 @@ define(['jquery', 'material','ripples','./connection'],
             }
         );
 
-        $("#settings").click(function(){
-            overwolf.windows.obtainDeclaredWindow("settings",
-                function(result){
-                    if (result.status == "success"){
-                        view.settingsViewId = result.window.id;
-                        overwolf.windows.restore(view.settingsViewId);
-                    }
-                }
-            );
-        });
 
         return view;
 });

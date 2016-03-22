@@ -8,80 +8,42 @@
 	<link href="css/global.css" rel="stylesheet">
 	<link href="css/settings.css" rel="stylesheet">
 
-	<script src="js/jquery.js"></script> 
+	<script data-main="app" src="lib/require.js"></script>
+	<script>
+		requirejs(['app/settings/view']);
+	</script>
 
-	<script src="js/jquery-ui.min.js"></script> 
-	<script src="js/material.min.js"></script> 
-	<script src="js/ripples.min.js"></script> 
-	
-    <script type="text/javascript">
-		var windowId;
-		
-		$(function(){
-			$.material.init();
-			
-			overwolf.windows.getCurrentWindow(function(result){
-				if (result.status=="success"){
-					windowId = result.window.id;
-				}
-			});
-			
-			$("#save").click(function(){
-				var val = $("#videoSelection").find(":selected").val();
-				if(val != undefined){
-					localStorage.setItem("sourceId",val);
-				}
-			
-				overwolf.windows.close(windowId);
-			});
-			
-			MediaStreamTrack.getSources(function(sourceInfos) {
-				var sourceId = localStorage.getItem("sourceId");
-				var found = false;
-				$("#videoSelection").empty();
-				$("#videoSelection").append($('<option>').text("Default video device"));
-							
-				for (var i = 0; i != sourceInfos.length; ++i) {
-					var sourceInfo = sourceInfos[i];
-					
-					if (sourceInfo.kind === 'video') {
-						if(sourceInfo.id == sourceId){
-							found = true;
-							$("#videoSelection").append($('<option>').text(sourceInfo.label).val(sourceInfo.id));
-							$("#videoSelection option[value="+sourceInfo.id+"]").attr("selected",true);
-						}else{
-							$("#videoSelection").append($('<option>').text(sourceInfo.label).val(sourceInfo.id));
-						}
-					}
-				}
-				if(!found) localStorage.setItem("sourceId",null);
-				$("#videoSelection").show(); 
-			});
-			
-		});
-    </script>
 	</head>
 	<body>
 	
 	<div class="well bs-component" id="settings-page">
           <form class="form-horizontal">
             <fieldset>
-              <legend>Settings</legend>
-    
-              <div class="form-group">
-                <label for="videoSelection" class="col-md-2 control-label">Video Device</label>
+			  <legend>Settings</legend>
 
-                <div class="col-md-10">
-				  <select id="videoSelection" class="form-control"><option>No webcam detected</option></select>
-                </div>
-              <span class="material-input"></span></div>
-             
-              <div class="form-group">
-                <div class="col-md-10 col-md-offset-2">
-                  <button type="button" id="save"  class="btn btn-primary">Save</button>
-                </div>
-              </div>
-            </fieldset>
+			  <div class="form-group">
+				  <label for="videoSelection" class="col-md-2 control-label">Video Device</label>
+
+				  <div class="col-md-10">
+					  <select id="videoSelection" class="form-control"><option>No webcam detected</option></select>
+				  </div>
+				  <span class="material-input"></span></div>
+				<br/>
+				<label class="col-md-2 control-label">Behaviour </label>
+				<div class="form-group behaviour">
+					<div class="togglebutton col-md-10">
+						<label>
+							<input type="checkbox" id="hideNoCam" checked=""> Hide users without cam
+						</label>
+					</div>
+				</div>
+
+			  <div class="form-group">
+				  <div class="col-md-10 col-md-offset-2">
+					  <button type="button" id="save"  class="btn btn-primary">Save</button>
+				  </div>
+			  </div>
+		  </fieldset>
           </form>
 	</body>
 </html>

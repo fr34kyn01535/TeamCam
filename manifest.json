@@ -28,9 +28,9 @@
             "file":"Files/settings.html",
             "transparent":false,
             "resizable":false,
-            "size":{"width":400,"height":305},
-            "min_size":{"width":400,"height":305},
-            "max_size":{"width":400,"height":305}
+            "size":{"width":400,"height":505},
+            "min_size":{"width":400,"height":505},
+            "max_size":{"width":400,"height":505}
          }
       }
    }

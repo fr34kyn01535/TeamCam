@@ -13,10 +13,14 @@
     <!-- JavaScript -->
     <script src="lib/strophejingle.bundle.js"></script>
     <script data-main="app" src="lib/require.js"></script>
+    <script>
+        requirejs(['app/overlay/index']);
+    </script>
 </head>
 <body>
     <div id="videos">
-        <video style="z-index:1" id="localVideo"></video>
+        <video class="video" style="z-index:1" id="localVideo"></video>
+        <div id="nocam" class="video"><i class="material-icons">face</i></div>
     </div>
     <div id="overlay">
         <div id="username">
