@@ -14,6 +14,16 @@ define(['jquery','./view','strophe','../configuration','../logger'],
 			sess.accept();
 		});
 
+		$(document).bind('view.cameraToggle', function(event,state) {
+			state = (state != "true");
+			console.log(state);
+			if(state){
+				//$('#localVideo').stop();
+			}else{
+			}
+			view.toggleVideoCam(state);
+		});
+
 		$(document).bind('callterminated.jingle', function(event, sid, reason) {
 			view.removeVideo(sid);
 		});
@@ -21,6 +31,7 @@ define(['jquery','./view','strophe','../configuration','../logger'],
 		$(document).bind('iceconnectionstatechange.jingle', function(event, sid, sess) {
 			if (sess.peerconnection.signalingState == 'stable' && (sess.peerconnection.iceConnectionState == 'connected' || sess.peerconnection.iceConnectionState == 'completed')) {
 				var nickname = atob(sess.peerjid.split("/")[1].split("___")[0]);
+				logger.log(logger.components.connection,"Incoming connection from "+nickname);
 				var el = view.createVideo(nickname,sid);
 				RTC.attachMediaStream($(el), sess.remoteStream);
 				view.appendVideo(el);
@@ -61,7 +72,7 @@ define(['jquery','./view','strophe','../configuration','../logger'],
 					function (stream) {
 						connection.localStream = stream;
 						connection.strophe.jingle.localStream = stream;
-						var local = document.getElementById('localVideo');
+						var local = $('#localVideo')[0];
 						if (local != null) {
 							local.muted = true;
 							local.volume = 0;
@@ -76,9 +87,9 @@ define(['jquery','./view','strophe','../configuration','../logger'],
 				console.error('GUM failed: ', e);
 			}
 
-			connection.strophe.connect('anonymous.bam.yt', null, function(status) {
+			connection.strophe.connect(configuration.domain, null, function(status) {
 				if (status == Strophe.Status.CONNECTED) {
-					if (connection.localStream && connection.strophe.connected && Strophe.getNodeFromJid(connection.strophe.jid) != null) {
+					if (connection.localStream && connection.strophe.connected && strophe.getNodeFromJid(connection.strophe.jid) != null) {
 						connection.joinRoom(user,room.toLowerCase());
 					}
 				}
@@ -86,12 +97,12 @@ define(['jquery','./view','strophe','../configuration','../logger'],
 		}
 
 		connection.disconnect = function(){
-			if (connection.connection && connection.connection.connected) {
-				connection.connection.jingle.localStream.stop();
-				connection.connection.options.sync = true;
-				connection.connection.flush();
-				connection.connection.disconnect();
-				connection.connection.options.sync = false;
+			if (connection.strophe && connection.strophe.connected) {
+				connection.strophe.jingle.localStream.stop();
+				connection.strophe.options.sync = true;
+				connection.strophe.flush();
+				connection.strophe.disconnect();
+				connection.strophe.options.sync = false;
 			}
 		}
 
@@ -100,11 +111,11 @@ define(['jquery','./view','strophe','../configuration','../logger'],
 			connection.roomName = room + '@conference.bam.yt';
 			connection.nickname = username+"___"+Math.random();
 			logger.log(logger.components.connection,"Connecting to: "+encodeURIComponent(room));
-			connection.connection.addHandler(connection.onPresence.bind(this), null, 'presence', null, null, connection.roomName, {matchBare: true});
-			connection.connection.addHandler(connection.onPresenceUnavailable.bind(this), null, 'presence', 'unavailable', null, connection.roomName, {matchBare: true});
+			connection.strophe.addHandler(connection.onPresence.bind(this), null, 'presence', null, null, connection.roomName, {matchBare: true});
+			connection.strophe.addHandler(connection.onPresenceUnavailable.bind(this), null, 'presence', 'unavailable', null, connection.roomName, {matchBare: true});
 
 			pres = $pres({to: connection.roomName + '/' + connection.nickname }).c('x', {xmlns: 'http://jabber.org/protocol/muc'});
-			connection.connection.send(pres);
+			connection.strophe.send(pres);
 		};
 
 		connection.onPresence = function(pres) {
@@ -122,7 +133,7 @@ define(['jquery','./view','strophe','../configuration','../logger'],
 			}
 			if (from == this.roomName + '/' + this.nickname) {
 				for (var peer in connection.peers) {
-					connection.connection.jingle.initiate(peer, connection.roomName + '/' + connection.nickname);
+					connection.strophe.jingle.initiate(peer, connection.roomName + '/' + connection.nickname);
 				}
 			} else {
 				connection.peers[from] = 1;
@@ -131,11 +142,12 @@ define(['jquery','./view','strophe','../configuration','../logger'],
 		};
 
 		connection.onPresenceUnavailable = function(pres) {
-			connection.connection.jingle.terminateByJid($(pres).attr('from'));
+			connection.strophe.jingle.terminateByJid($(pres).attr('from'));
 			delete connection.peers[from];
 			return true;
 		};
 
+		window.c = connection;
 		return connection;
 
 	});

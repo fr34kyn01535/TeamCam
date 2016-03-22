@@ -2,7 +2,6 @@ define(['./view','./connection'],
     function(view,connection) {
         var teamspeak = {};
         teamspeak.activeServerId = 0;
-
         teamspeak.reconnect = function(){
             ts3.getServerInfo(teamspeak.activeServerId,function(success,channel){
                 if(!success.success) return;
@@ -15,8 +14,22 @@ define(['./view','./connection'],
 
                 connection.disconnect();
                 connection.connect(username,room);
+
+                ts3.getClientInfo({serverId:teamspeak.activeServerId},function(success,e){
+                    view.toggleMicrophone(e.isInputMuted);
+                })
+
             });
         }
+
+
+        $(document).bind('view.microphoneToggle', function(event,state) {
+            state = (state != "true");
+            ts3.updateClientDeviceState({serverId:teamspeak.activeServerId,muteMicrophone:state},function(success,e){
+                if(!success.success) return;
+            });
+            view.toggleMicrophone(state);
+        });
 
         $(document).bind('teamspeak.load', function(event,ts3) {
             ts3.init({name:""}, function(result,servers) {
@@ -72,6 +85,7 @@ define(['./view','./connection'],
 
 
         });
+
         return teamspeak;
 
     });

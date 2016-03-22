@@ -34,11 +34,14 @@ define(['jquery','material'],
                     }
                 );
             });
+            $("#cameraToggle").click(function(){
+                $(document).trigger('view.cameraToggle', $("#cameraToggle").attr("data_value"));
+            });
+
+            $("#microphoneToggle").click(function(){
+                $(document).trigger('view.microphoneToggle', $("#microphoneToggle").attr("data_value"));
+            });
         });
-
-
-
-
 
         view.removeVideo = function(sid){
             $('#videos').find('>#remoteVideos_' + sid).fadeOut(350,function(){
@@ -76,6 +79,24 @@ define(['jquery','material'],
         view.createVideo = function(nickname,sid){
             return $('<video class="video" data_nickname="'+nickname+'" autoplay="autoplay" oncontextmenu="return false;"/>').attr('id', 'remoteVideos_' + sid);
         }
+
+        view.toggleMicrophone = function(state){
+            $("#microphoneToggle").attr("data_value",state);
+            if(state){
+                $("#microphoneToggle i").text("mic_off");
+            }else{
+                $("#microphoneToggle i").text("mic");
+            }
+        }
+        view.toggleVideoCam = function(state){
+            $("#cameraToggle").attr("data_value",state);
+            if(state == true){
+                $("#cameraToggle i").text("videocam_off");
+            }else{
+                $("#cameraToggle i").text("videocam");
+            }
+        }
+
 
         view.videoExists = function(nickname){
             return $("video[data_nickname='"+nickname+"'").length != 0;
