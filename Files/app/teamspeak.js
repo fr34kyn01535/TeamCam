@@ -1,4 +1,4 @@
-define(['./view','./chat'],
+define(['./view','./connection'],
     function(view,chat) {
         var teamspeak = {};
         teamspeak.activeServerId = 0;

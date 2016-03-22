@@ -1,4 +1,4 @@
-define(['./chat','./teamspeak'],
+define(['./connection','./teamspeak'],
     function(chat,teamspeak){
       
 });

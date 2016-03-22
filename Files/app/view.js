@@ -1,5 +1,5 @@
-define(['jquery', 'material','ripples','./chat'],
-    function($, material, ripples,chat) {
+define(['jquery', 'material','ripples','./connection'],
+    function($,chat) {
 
         var view = {};
         view.viewId = 0;

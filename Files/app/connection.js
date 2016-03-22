@@ -1,5 +1,5 @@
-define(['jquery','./view','strophe'],
-	function($,view, strophe) {
+define(['jquery','./view','strophe','./configuration','./logger'],
+	function($,view, strophe,configuration,logger) {
 		var chat = {};
 		chat.peers = {};
 		chat.localStream = null;
@@ -36,13 +36,13 @@ define(['jquery','./view','strophe'],
 		});
 
 		chat.connect = function(user,room){
-			var connection = chat.connection = new strophe.Connection('https://chat.freakynois.es/http-bind/');
+			var connection = chat.connection = new strophe.Connection(configuration.bosh);
 			if (false) {
 				connection.rawInput = function(data) { console.log('RECV: ' + data); };
 				connection.rawOutput = function(data) { console.log('SEND: ' + data); };
 			}
 			connection.jingle.pc_constraints = RTC.pc_constraints;
-			connection.jingle.ice_config = {iceServers: [{url: 'stun:stun.l.google.com:19302'}]};
+			connection.jingle.ice_config = {iceServers: [{url: configuration.stun}]};
 
 			try {
 				var video = true;
@@ -52,7 +52,6 @@ define(['jquery','./view','strophe'],
 
 				RTC.getUserMedia({audio:false,video:video},
 					function (stream) {
-						console.log('onUserMediaSuccess');
 						chat.localStream = stream;
 						connection.jingle.localStream = stream;
 						var local = document.getElementById('localVideo');
@@ -93,7 +92,7 @@ define(['jquery','./view','strophe'],
 		chat.joinRoom = function(username,room) {
 			chat.roomName = room + '@conference.bam.yt';
 			chat.nickname = username+"___"+Math.random();
-			console.log("Connecting to: "+encodeURIComponent(room));
+			logger.log(logger.components.connection,"Connecting to: "+encodeURIComponent(room));
 			chat.connection.addHandler(chat.onPresence.bind(this), null, 'presence', null, null, chat.roomName, {matchBare: true});
 			chat.connection.addHandler(chat.onPresenceUnavailable.bind(this), null, 'presence', 'unavailable', null, chat.roomName, {matchBare: true});
 

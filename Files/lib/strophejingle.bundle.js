@@ -6970,7 +6970,7 @@ JingleSession.prototype.sendIceCandidate = function (candidate) {
             console.log('try to send ack(offer)...');
             this.connection.sendIQ(init,
                 function () {
-                    console.log('Sent session initiate (ACK, offer)...');
+                    //console.log('Sent session initiate (ACK, offer)...');
                     var ack = {};
                     ack.source = 'offer';
                     $(document).trigger('ack.jingle', [self.sid, ack]);
@@ -7037,7 +7037,7 @@ JingleSession.prototype.sendIceCandidates = function (candidates) {
         function () {
             var ack = {};
             ack.source = 'transportinfo';
-            console.log('Sent session initiate (ACK, transportinfo)...');
+            //console.log('Sent session initiate (ACK, transportinfo)...');
             $(document).trigger('ack.jingle', [this.sid, ack]);
         },
         function (stanza) {
@@ -7128,7 +7128,7 @@ JingleSession.prototype.setRemoteDescription = function (elem, desctype) {
     this.remoteSDP = new SDP('');
     this.remoteSDP.fromJingle(elem);
     if (this.peerconnection.remoteDescription !== null) {
-        console.log('setRemoteDescription when remote description is not null, should be pranswer', this.peerconnection.remoteDescription);
+        //console.log('setRemoteDescription when remote description is not null, should be pranswer', this.peerconnection.remoteDescription);
         if (this.peerconnection.remoteDescription.type == 'pranswer') {
             var pranswer = new SDP(this.peerconnection.remoteDescription.sdp);
             for (var i = 0; i < pranswer.media.length; i++) {
@@ -7203,7 +7203,7 @@ JingleSession.prototype.addIceCandidate = function (elem) {
                         if (tmp.length) {
                             self.remoteSDP.media[i] += 'a=fingerprint:' + tmp.attr('hash') + ' ' + tmp.text() + '\r\n';
                         } else {
-                            console.log('no dtls fingerprint (webrtc issue #1718?)');
+                            //console.log('no dtls fingerprint (webrtc issue #1718?)');
                             self.remoteSDP.media[i] += 'a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:BAADBAADBAADBAADBAADBAADBAADBAADBAADBAAD\r\n';
                         }
                         break;
@@ -7221,7 +7221,7 @@ JingleSession.prototype.addIceCandidate = function (elem) {
         }).length == this.remoteSDP.media.length;
 
         if (iscomplete) {
-            console.log('setting pranswer');
+            //console.log('setting pranswer');
             try {
                 this.peerconnection.setRemoteDescription(new RTCSessionDescription({type: 'pranswer', sdp: this.remoteSDP.raw }),
                     function() {
@@ -7297,7 +7297,7 @@ JingleSession.prototype.createdAnswer = function (sdp, provisional) {
     this.usepranswer = provisional === true;
 
     if (this.startmuted) {
-        console.log('we got a request to start muted...');
+        //console.log('we got a request to start muted...');
         this.connection.jingle.localStream.getAudioTracks().forEach(function (track) {
             track.enabled = false;
         });
