@@ -1,73 +1,77 @@
-
 define(['./view','./chat'],
     function(view,chat) {
         var teamspeak = {};
+        teamspeak.activeServerId = 0;
 
-        teamspeak.ts3 =  view.getTS3Element();
-        teamspeak.activeServerId = {};
+        teamspeak.reconnect = function(){
+            ts3.getServerInfo(teamspeak.activeServerId,function(success,channel){
+                if(!success.success) return;
 
-        teamspeak.ts3.init({name:""}, function(result,servers) {
-            if(result.error){
-                alert("Teamspeak 3 could not be detected, restart Overwolf as Admin...");
-                return;
-            }
-            teamspeak.activeServerId = servers.activeServerId;
-        });
+                var username = btoa(unescape(encodeURIComponent(channel.myClientName)));
+                var room = btoa(unescape(encodeURIComponent(channel.channelName+channel.host)));
 
-        teamspeak.ts3.addEventListener("onServerStatusChange", function(data) {
-            if(data.status == "CONNECTION_ESTABLISHED"){
-                console.log("onServerStatusChang: ",data);
-                activeServerId = data.serverId;
-                chat.reconnect();
-            }
-        });
+                view.setMyNickname(channel.myClientName);
+                view.setInfo(channel.host,channel.channelName);
 
-        teamspeak.ts3.addEventListener("onActiveServerChanged",
-            function(serverId) {
-                activeServerId = serverId;
-                chat.reconnect();
-            }
-        );
+                chat.disconnect();
+                chat.connect(username,room);
+            });
+        }
 
-        teamspeak.ts3.addEventListener("onDisconnectedFromClient",
-            function(){
-                close();
-            }
-        );
-
-        teamspeak.ts3.addEventListener("onClientEvent",
-            function(e) {
-                if(e.isOwnClient && e.newChannelId){
-                    chat.reconnect();
+        $(document).bind('teamspeak.load', function(event,ts3) {
+            ts3.init({name:""}, function(result,servers) {
+                if(result.error){
+                    console.log(result.error);
+                    alert("Teamspeak could not be initialised:"+result.error+" \bRestart Overwolf and Teamspeak 3 and try again.");
+                    view.close();
+                    return;
                 }
-            }
-        );
+                teamspeak.activeServerId = servers.activeServerId;
+                teamspeak.reconnect();
+            });
 
-        teamspeak.ts3.addEventListener("onTalkStatusChanged",
-            function(e) {
-                if(e.state == "Talk"){
-                    view.setTalking(e.clientName,true);
+            ts3.addEventListener("onServerStatusChange", function(data) {
+                if(data.status == "CONNECTION_ESTABLISHED"){
+                    console.log("onServerStatusChang: ",data);
+                    activeServerId = data.serverId;
+                    teamspeak.reconnect();
                 }
-                else if(e.state == "StopTalk"){
-                    view.setTalking(e.clientName,false);
+            });
+
+            ts3.addEventListener("onActiveServerChanged",
+                function(serverId) {
+                    activeServerId = serverId;
+                    teamspeak.reconnect();
                 }
-            }
-        );
+            );
 
-        teamspeak.ts3.getServerInfo(teamspeak.activeServerId,function(success,channel){
-            if(!success.success) return;
-            var username = btoa(unescape(encodeURIComponent(channel.myClientName)));
+            ts3.addEventListener("onDisconnectedFromClient",
+                function(){
+                    close();
+                }
+            );
 
-            $("#username .value").text(channel.myClientName);
-            $("#localVideo").attr("data_nickname",channel.myClientName);
+            ts3.addEventListener("onClientEvent",
+                function(e) {
+                    if(e.isOwnClient && e.newChannelId){
+                        teamspeak.reconnect();
+                    }
+                }
+            );
 
-            var room = btoa(unescape(encodeURIComponent(channel.channelName+channel.host)));
+            ts3.addEventListener("onTalkStatusChanged",
+                function(e) {
+                    if(e.state == "Talk"){
+                        view.setTalking(e.clientName,true);
+                    }
+                    else if(e.state == "StopTalk"){
+                        view.setTalking(e.clientName,false);
+                    }
+                }
+            );
 
-            $("#info").html("Host: "+channel.host+"<br/>Channel: "+channel.channelName);
 
-            chat.connect(username,room);
         });
-
         return teamspeak;
 
     });

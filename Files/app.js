@@ -6,15 +6,14 @@ requirejs.config({
         jquery_ui: 'jquery-ui.min',
         material: 'material.min',
         ripples: 'ripples.min',
-        strophe: 'strophejingle.bundle',
+        strophe: 'strophe'
     },
     shim: {
         'material': { deps: ["jquery", "jquery_ui"]},
+        'ripples': { deps: ["jquery"]},
         'jquery': {
             exports: '$'
         }
     }
 });
 requirejs(['app/main']);
-
-console.log("TeamCam booting...");

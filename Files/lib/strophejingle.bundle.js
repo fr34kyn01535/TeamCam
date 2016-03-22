@@ -7631,4 +7631,3 @@ JingleSession.prototype.getStats = function (interval) {
     }, interval || 3000);
     return this.statsinterval;
 };
-
