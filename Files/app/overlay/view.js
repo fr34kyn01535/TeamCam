@@ -72,6 +72,9 @@ define(['jquery','material'],
             $("#username .value").text(nickname);
         }
 
+        view.getLocalVideo = function(){
+            return $('#localVideo')[0];
+        }
         view.videoExists = function(nickname){
             return $("video[data_nickname='"+nickname+"'").length != 0;
         }
@@ -90,10 +93,18 @@ define(['jquery','material'],
         }
         view.toggleVideoCam = function(state){
             $("#cameraToggle").attr("data_value",state);
-            if(state == true){
+            if(state){
                 $("#cameraToggle i").text("videocam_off");
+                if(view.iAmTalking) {
+                    $(".video").css("z-index", 0);
+                    $("#nocam").css("z-index", 1000);
+                }
             }else{
                 $("#cameraToggle i").text("videocam");
+                if(view.iAmTalking){
+                    $(".video").css("z-index",0);
+                    $("#localVideo").css("z-index",1000);
+                }
             }
         }
 
@@ -102,11 +113,21 @@ define(['jquery','material'],
             return $("video[data_nickname='"+nickname+"'").length != 0;
         }
 
+
         view.setTalking = function(nickname,talking){
                 var selector = null;
-
                 var talkingVideo = $("video[data_nickname='"+nickname+"'");
-                if(talkingVideo.length != 0) {
+
+                if($(talkingVideo).attr("id") == 'localVideo'){
+                    view.iAmTalking = true;
+                }else{
+                    view.iAmTalking = false;
+                }
+
+                if($("#cameraToggle").attr("data_value") == "true" && view.iAmTalking){
+                    selector = $("#nocam");
+                }
+                else if(talkingVideo.length != 0) {
                     selector = talkingVideo;
                 }else if(localStorage.getItem("hideNoCam") != "true"){
                     selector = $("#nocam");

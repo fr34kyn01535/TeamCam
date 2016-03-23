@@ -1,5 +1,5 @@
-define([],
-    function() {
+define(["./configuration"],
+    function(configuration) {
         var logger = {};
 
         logger.components = {
@@ -20,6 +20,10 @@ define([],
         };
         logger.warn = function(component,text){
             console.log("%c["+component+"] %c"+text,"color:#111;font-weight:bold;","color:#222;font-weight:normal;")
+        };
+        logger.debug = function(component,text,params){
+            if(configuration.debug)
+                console.log("%c["+component+"] %c"+text,"color:green;font-weight:bold;","color:#222;font-weight:normal;",params)
         };
         return logger;
     });

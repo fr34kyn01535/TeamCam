@@ -1,5 +1,5 @@
-define(['./view','./connection'],
-    function(view,connection) {
+define(['./view','./connection','../logger'],
+    function(view,connection,logger) {
         var teamspeak = {};
         teamspeak.activeServerId = 0;
         teamspeak.reconnect = function(){
@@ -24,6 +24,7 @@ define(['./view','./connection'],
 
 
         $(document).bind('view.microphoneToggle', function(event,state) {
+            logger.debug(logger.components.teamspeak,"Event: view.microphoneToggle",[event,state]);
             state = (state != "true");
             ts3.updateClientDeviceState({serverId:teamspeak.activeServerId,muteMicrophone:state},function(success,e){
                 if(!success.success) return;
@@ -32,10 +33,11 @@ define(['./view','./connection'],
         });
 
         $(document).bind('teamspeak.load', function(event,ts3) {
+            logger.debug(logger.components.teamspeak,"Event: teamspeak.load",[event,ts3]);
             ts3.init({name:""}, function(result,servers) {
                 if(result.error){
                     console.log(result.error);
-                    alert("Teamspeak could not be initialised:"+result.error+" \bRestart Overwolf and Teamspeak 3 and try again.");
+                    alert("Teamspeak could not be initialised: "+result.error+" \nRestart Overwolf and Teamspeak 3 and try again.");
                     view.close();
                     return;
                 }

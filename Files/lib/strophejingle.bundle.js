@@ -6977,7 +6977,7 @@ JingleSession.prototype.sendIceCandidate = function (candidate) {
                 },
                 function (stanza) {
                     self.state = 'error';
-                    self.peerconnection.close();
+                    try{self.peerconnection.close();}catch(e){}
                     var error = ($(stanza).find('error').length) ? {
                         code: $(stanza).find('error').attr('code'),
                         reason: $(stanza).find('error :first')[0].tagName,
@@ -7387,7 +7387,7 @@ JingleSession.prototype.sendTerminate = function (reason, text) {
     
     this.connection.sendIQ(term,
         function () {
-            self.peerconnection.close();
+            try{self.peerconnection.close();}catch(e){}
             self.peerconnection = null;
             self.terminate();
             var ack = {};

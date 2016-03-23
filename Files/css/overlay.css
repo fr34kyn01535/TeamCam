@@ -12,6 +12,9 @@ overflow:hidden;
 z-index:2000;
 }
 
+#localVideo{
+    z-index:1;
+}
  .video{
      width: 100%;
      height:100%;
